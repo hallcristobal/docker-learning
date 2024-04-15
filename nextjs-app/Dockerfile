@@ -1,6 +1,8 @@
 ARG NODE_VERSION=21.7.3
-ARG ALPINE_VERSION=3.19
-FROM node:${NODE_VERSION}-alpine as build
+
+FROM node:${NODE_VERSION}-alpine as base
+
+FROM base as build
 
 ENV NODE_ENV=production
 
@@ -11,17 +13,18 @@ RUN npm install -g pnpm
 RUN pnpm install
 RUN pnpm build
 
-FROM alpine:${ALPINE_VERSION} as main
-
+FROM base as main
 WORKDIR /app
 
-COPY --from=build /usr/lib /usr/lib
-COPY --from=build /usr/local/lib /usr/local/lib
-COPY --from=build /usr/local/include /usr/local/include
-COPY --from=build /usr/local/bin /usr/local/bin
-COPY --from=build /app/.next ./.next
+ENV NODE_ENV=production
+
+COPY --from=build /app/public ./public
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
 
 EXPOSE 3000
+ENV PORT 3000
 
-RUN npm install -g next@latest
-CMD npx next start
+CMD node server.js
