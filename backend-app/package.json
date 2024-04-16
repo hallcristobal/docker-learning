@@ -1,0 +1,25 @@
+{
+  "name": "backend-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "build": "rm -rf ./build && tsc --build --verbose tsconfig.json && cp -v src/generated/client/*.node build/generated/client/",
+    "serve": "node build/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@prisma/client": "5.12.1",
+    "prisma": "^5.12.1",
+    "express": "^4.19.2"
+  }
+}

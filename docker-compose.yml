@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  test-nextjs-app:
+    restart: always
+    build:
+      context: ./nextjs-app
+      dockerfile: Dockerfile
+    image: test-nextjs-app
+    ports:
+      - 3000:3000
+
+  test-backend-app:
+    restart: always
+    build:
+      context: ./backend-app
+      dockerfile: Dockerfile
+    image: test-backend-app
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+
+  db:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"
+        ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+
+volumes:
+  pgdata:
