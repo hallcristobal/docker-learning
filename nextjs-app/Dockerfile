@@ -4,7 +4,7 @@ FROM node:${NODE_VERSION}-alpine as base
 
 FROM base as build
 
-ENV NODE_ENV=production
+# ENV NODE_ENV=production
 
 WORKDIR /app
 ADD . /app

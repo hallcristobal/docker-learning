@@ -10,7 +10,7 @@ WORKDIR /app
 ADD . /app
 COPY .env .
 
-RUN rm src/generated/client/*.node
+RUN rm -f src/generated/client/*.node
 RUN npm install -g pnpm
 RUN pnpm install
 RUN pnpm exec prisma generate
